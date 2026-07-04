@@ -1,7 +1,7 @@
 # Maintainer: N0ctane._.Dev <n0ctanedev@gmail.com>
 pkgname=nebula-shell
 pkgver=1.0.0
-pkgrel=3
+pkgrel=5
 pkgdesc="Fast, lightweight desktop widgets and shell framework for Wayland"
 arch=('x86_64' 'aarch64')
 url="https://github.com/n0ctaneteam/nebula-shell"
@@ -26,7 +26,7 @@ makedepends=(
 optdepends=()
 provides=('nebula-shell')
 conflicts=('nebula-shell-git')
-source=("$pkgname::git+https://github.com/n0ctaneteam/nebula-shell.git#tag=v$pkgver")
+source=("$pkgname::git+https://github.com/n0ctaneteam/nebula-shell.git")
 sha256sums=('SKIP')
 
 pkgver() {
