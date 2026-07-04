@@ -50,6 +50,7 @@ for subdir in "$REPO_ROOT"/*/; do
     rm -r src
     rm -r pkg
     rm *.tar.*
+    rm -rf nebula-shell
     echo ""
 done
 
