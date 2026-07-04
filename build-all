@@ -4,14 +4,13 @@ clear
 # =========================
 # Config
 # =========================
-PREFIX="n0ctos-"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # =========================
 # Find matching local folders
 # =========================
 echo "Searching in: $SCRIPT_DIR"
-echo "Looking for folders starting with: $PREFIX"
+echo "Looking for pkg folders "
 echo
 
 mapfile -t MATCHING_DIRS < <(
@@ -19,7 +18,8 @@ mapfile -t MATCHING_DIRS < <(
         -mindepth 1 \
         -maxdepth 1 \
         -type d \
-        -name "${PREFIX}*" \
+        -not -name '.*' \
+        -not -name '_*' \
         | sort
 )
 

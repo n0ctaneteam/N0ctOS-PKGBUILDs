@@ -4,7 +4,6 @@ clear
 # =========================
 # Config
 # =========================
-PREFIX="n0ctos-"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 GITHUB_USER="n0ctaneteam"
 GITHUB_REPO="N0ctOS-PKGs"
@@ -53,12 +52,13 @@ echo "Scanning for changes against origin/$DIFF_BRANCH ..."
 echo
 
 mapfile -t ALL_DIRS < <(
-    find "$SCRIPT_DIR" \
-        -mindepth 1 \
-        -maxdepth 1 \
-        -type d \
-        -name "${PREFIX}*" \
-        | sort
+  find "$SCRIPT_DIR" \
+    -mindepth 1 \
+    -maxdepth 1 \
+    -type d \
+    -not -name '.*' \
+    -not -name '_*' \
+    | sort
 )
 
 # MATCHING_DIRS will only contain dirs that actually need a build
