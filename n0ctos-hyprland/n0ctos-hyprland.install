@@ -1,0 +1,22 @@
+post_install() {
+    local _user="${SUDO_USER:-$USER}"
+    if [ -n "$_user" ] && [ "$_user" != "root" ]; then
+        local _home
+        _home=$(getent passwd "$_user" | cut -d: -f6)
+        if [ -d "$_home" ] && [ -d "/usr/share/N0ctOS/config/$pkgname/custom" ]; then
+            mkdir -p "$_home/.config/$pkgname"
+            mv /usr/share/N0ctOS/config/$pkgname/custom/* "$_home/.config/$pkgname/" 2>/dev/null || true
+            rm -rf "/usr/share/N0ctOS/config/$pkgname/custom"
+        fi
+    fi
+}
+
+post_remove() {
+    rm -rf "/usr/share/N0ctOS/config/$pkgname"
+    local _user="${SUDO_USER:-$USER}"
+    if [ -n "$_user" ] && [ "$_user" != "root" ]; then
+        local _home
+        _home=$(getent passwd "$_user" | cut -d: -f6)
+        rm -rf "$_home/.config/$pkgname" 2>/dev/null || true
+    fi
+}

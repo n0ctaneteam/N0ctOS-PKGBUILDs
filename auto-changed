@@ -1,7 +1,8 @@
-#!/bin/env bash
+#!/usr/bin/env bash
 set -euo pipefail
-clear
 
-./build-changed
-./clean-all
-./push-to-repo
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+"$SCRIPT_DIR/build-changed"
+"$SCRIPT_DIR/clean-all"
+"$SCRIPT_DIR/push-to-repo"

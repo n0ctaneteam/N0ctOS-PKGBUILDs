@@ -1,21 +1,15 @@
 #!/bin/bash
 
-# ================================
-# KEEP RULES
-# add filenames, extensions, or patterns
-# ================================
 KEEP=(
     "PKGBUILD"
     ".SRCINFO"
-    'config.*'
+    "*.install"
+    "config"
+    "config/*"
+    "config/default/*"
+    "config/custom/*"
     '*.desktop'
-    # "*.cfg"
-    # "*.cfg/**"
 )
-
-# ================================
-# SCRIPT
-# ================================
 
 REPO_ROOT="$(cd "$(dirname "$0")" && pwd)"
 
@@ -39,18 +33,22 @@ echo ""
 
 for subdir in "$REPO_ROOT"/*/; do
     [ -d "$subdir" ] || continue
-
-    # skip folders
-    [[ "$(basename "$subdir")" == "__deployed__" ]] && continue
-    [[ "$(basename "$subdir")" == "n0ctos-keyring" ]] && continue
+    [ "$(basename "$subdir")" == ".git" ] && continue
 
     echo ">> Cleaning: $(basename "$subdir")"
 
-    cd ${subdir}
-    rm -r src
-    rm -r pkg
-    rm *.tar.*
-    rm -rf nebula-shell
+    cd "$subdir"
+
+    for item in "$subdir"*; do
+        [ -e "$item" ] || continue
+        if should_keep "$item"; then
+            echo "  [KEEP] $(basename "$item")"
+        else
+            echo "  [RM]   $(basename "$item")"
+            rm -rf "$item"
+        fi
+    done
+
     echo ""
 done
 

@@ -1,28 +1,23 @@
-#!/bin/env bash
-#
-# PUSH THE PKG REPO
-#
+#!/usr/bin/env bash
+set -euo pipefail
 
-DIFF_REPO=main
-TARGET_REPO=main
-DEPLOY_DIR=~/Projects/N0ctOS/N0ctOS-PKGs/__deployed__/x86_64
-REPO_DIR=~/Projects/N0ctOS/N0ctOS-PKGs
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-./gpg-key-set
+DIFF_REPO=configs
+TARGET_REPO=configs
+DEPLOY_DIR="$SCRIPT_DIR/__deployed__/x86_64"
+REPO_DIR="$SCRIPT_DIR"
 
 cd "$DEPLOY_DIR"
 
-# clean old db files only
-rm -f N0ctOS-core.*
+rm -f N0ctOS-configs.*
 
-# rebuild db from whatever .pkg.tar.zst files are here
-repo-add --sign N0ctOS-core.db.tar.zst *.pkg.tar.zst
+repo-add --sign N0ctOS-configs.db.tar.zst *.pkg.tar.zst
 
-# rename .tar.zst → bare db/files names (what pacman expects over raw URLs)
-mv -f N0ctOS-core.db.tar.zst     N0ctOS-core.db
-mv -f N0ctOS-core.db.tar.zst.sig N0ctOS-core.db.sig
-mv -f N0ctOS-core.files.tar.zst     N0ctOS-core.files
-mv -f N0ctOS-core.files.tar.zst.sig N0ctOS-core.files.sig
+mv -f N0ctOS-configs.db.tar.zst     N0ctOS-configs.db
+mv -f N0ctOS-configs.db.tar.zst.sig N0ctOS-configs.db.sig
+mv -f N0ctOS-configs.files.tar.zst     N0ctOS-configs.files
+mv -f N0ctOS-configs.files.tar.zst.sig N0ctOS-configs.files.sig
 
 cd "$REPO_DIR"
 
@@ -41,7 +36,6 @@ notify-send \
     'N0ctOS PKG pusher:' \
     "Changes Pushed !!! Generating PR..."
 
-# ── detect changed packages ────────────────────────────────────────────────
 CHANGED_PKGS=$(git diff origin/"$DIFF_REPO" --name-only \
     | grep '__deployed__/x86_64/.*\.pkg\.tar\.zst$' \
     | grep -v '\.sig$' \
@@ -58,11 +52,10 @@ if [ -z "$CHANGED_PKGS" ]; then
     exit 0
 fi
 
-# ── build PR body ──────────────────────────────────────────────────────────
 PKG_COUNT=$(( $(wc -l <<< "$CHANGED_PKGS") / 2 ))
 PKG_LIST=$(echo "$CHANGED_PKGS" | sed 's/^/- /')
 
-PR_BODY="## 📦 Package Update
+PR_BODY="## ⚙️ Package Update
 **Pushed by:** \`$GIT_USER\`
 **Time:** \`$CURRENT_TIME\`
 **Packages changed:** $PKG_COUNT
@@ -78,11 +71,10 @@ $PKG_LIST
 
 > Add the \`APPROVED\` label to trigger signing and merge into \`testing\`"
 
-# ── open PR via gh cli ─────────────────────────────────────────────────────
 PR_URL=$(gh pr create \
     --base $TARGET_REPO \
     --head "$BRANCH" \
-    --title "📦 [$GIT_USER] $PKG_COUNT pkg(s) updated @ $CURRENT_TIME" \
+    --title "⚙️ [$GIT_USER] $PKG_COUNT pkg(s) updated @ $CURRENT_TIME" \
     --body "$PR_BODY")
 
 notify-send \

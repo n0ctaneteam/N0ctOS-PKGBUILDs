@@ -1,10 +1,8 @@
-#!/bin/env bash
-# THIS REPO SETS UP THE DEV ENVIRONMMENT TO AUTOMATE
-# THE PROCESS OF PKG BUILDING AND DEPLOYING TO REPO
-# RUN THIS SCRIPT ONCE
-doc_url=https://n0ctaneteam.github.io/N0ctOS
+#!/usr/bin/env bash
+set -euo pipefail
 
-# Array of script names
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 SCRIPTS=(
     "auto-all"
     "auto-changed"
@@ -15,9 +13,6 @@ SCRIPTS=(
     "gpg-key-set"
 )
 
-mkdir ~/Projects/N0ctOS
-cd ~/Projects/N0ctOS
-
 echo "############################################################"
 echo "###   Do u want to clone full repo ? (or just latest ?)  ###"
 echo "############################################################"
@@ -26,39 +21,29 @@ read git_clone_type
 
 case $git_clone_type in
     "2")
-        git_clone_type="full"
-        echo -e "\n\n\ncloning the $git_clone_type git"
-        git clone https://github.com/n0ctaneteam/N0ctOS-PKGs.git
+        echo -e "\n\n\ncloning full git"
+        git clone --branch configs https://github.com/n0ctaneteam/N0ctOS-configs.git
         ;;
     *)
-        git_clone_type="latest"
-        echo -e "\n\n\ncloning the $git_clone_type git"
-        git clone --depth=1 https://github.com/n0ctaneteam/N0ctOS-PKGs.git
+        echo -e "\n\n\ncloning latest git"
+        git clone --depth=1 --branch configs https://github.com/n0ctaneteam/N0ctOS-configs.git
         ;;
 esac
 
-
 for FILE in "${SCRIPTS[@]}"; do
-    chmod +x ~/Projects/N0ctOS/N0ctOS-PKGs/"$FILE"
+    chmod +x "$SCRIPT_DIR/$FILE"
     echo "chmod-ed $FILE"
 done
 
-./gpg-key-set
-
-# install gh cli
 echo -e "\n\n\n\n\n\   Setup GH-CLI"
 sudo pacman -Sy github-cli --needed --noconfirm
 
-# authenticate (one time, interactive)
 gh auth login
 
-# =========================
-# Done
-# =========================
 echo
 echo "########################################"
 echo "!!!        Dev Env setup done        !!!"
 echo "########################################"
 echo -e "\n\n"
 echo -e "Read the docs for more info"
-echo $doc_url
+echo "https://n0ctaneteam.github.io/N0ctOS"

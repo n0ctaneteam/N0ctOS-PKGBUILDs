@@ -7,7 +7,7 @@ clear
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 GITHUB_USER="n0ctaneteam"
 GITHUB_REPO="N0ctOS-PKGs"
-DIFF_BRANCH="main"               # branch to diff against for change detection
+DIFF_BRANCH="configs"               # branch to diff against for change detection
 
 # Files to check for changes inside each package folder
 CHECK_FILES=(
